@@ -1,0 +1,20 @@
+name: Build Linux
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@main
+      with:
+        fetch-depth: 1
+    - run: |
+        sudo apt update
+        sudo apt install -y aria2 p7zip
+        aria2c https://torrent.fedoraproject.org/torrents/Fedora-KDE-Desktop-Live-x86_64-44.torrent
+        mv Fedora-KDE-Desktop-Live-x86_64-44/*.iso .
+    - uses: actions/upload-artifact@main
+      with:
+        path: AAAAAA.iso
+        archive: false
