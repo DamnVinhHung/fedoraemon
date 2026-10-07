@@ -11,7 +11,7 @@ jobs:
         fetch-depth: 1
     - run: |
         sudo apt update
-        sudo apt install -y p7zip
+        sudo apt install -y p7zip erofs-utils
         aria2c --seed-time=0 https://torrent.fedoraproject.org/torrents/Fedora-KDE-Desktop-Live-x86_64-44.torrent
         mv Fedora-KDE-Desktop-Live-x86_64-44/*.iso .
     - run: bash build.sh
