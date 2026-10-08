@@ -102,9 +102,7 @@ dnf autoremove --assumeyes
 
 # install repo
 FEDORA_VER=$(rpm -E %fedora)
-cd /boot
-KERNEL_OLD=*$(find -name "System.map*" | sed "s/System.map-//")
-cd -
+KERNEL_OLD=$(rpm -q kernel)
 
 dnf install --assumeyes --nogpgcheck \
     --repofrompath 'terra,https://repos.fyralabs.com/terra$releasever' terra-release
@@ -117,13 +115,13 @@ dnf config-manager addrepo --from-repofile="https://pkg.cloudflare.com/cloudflar
 dnf config-manager addrepo --from-repofile="https://fcitx5-lotus.pages.dev/rpm/fedora/fcitx5-lotus-$FEDORA_VER.repo"
 
 dnf update --assumeyes --refresh
-dnf remove --assumeyes "$KERNEL_OLD"
-KERNEL_NEW=$(find -name "System.map*" | sed "s/System.map-//")
+dnf remove --assumeyes "*${KERNEL_OLD}*"
+KERNEL_NEW=$(rpm -q kernel)
 
 # install pkgs
 
 dnf install --assumeyes ${PKG_NVIDIA[*]}
-until rpm -q "kmod-nvidia-$KERNEL_NEW"; do
+until rpm -qa "kmod-nvidia-*"; do
     sleep 5
 done
 
