@@ -116,21 +116,20 @@ dnf config-manager addrepo --from-repofile="https://fcitx5-lotus.pages.dev/rpm/f
 
 dnf update --assumeyes --refresh
 dnf remove --assumeyes "*${KERNEL_OLD}*"
-KERNEL_NEW=$(rpm -q kernel)
 
 # install pkgs
 
 dnf install --assumeyes ${PKG_NVIDIA[*]}
 until rpm -qa "kmod-nvidia-*"; do
+    echo "Waiting driver build to finish..."
     sleep 5
 done
 
-dnf swap --assumeyes --allowerasing ffmpeg-free ffmpeg
-dnf install --assumeyes ${PKG_CODEC[*]}
+dnf install --assumeyes --allowerasing ${PKG_CODEC[*]}
 # dnf install --assumeyes ${PKG_ADD[*]}
 
 cd /boot
 dracut --verbose --reproducible --no-hostonly --no-hostonly-cmdline --add " dmsquash-live livenet pollcdrom " initrd
-cp vmlinuz-$KERNEL_NEW linux
+cp vmlinuz-* linux
 chmod 777 initrd linux
 cd -
