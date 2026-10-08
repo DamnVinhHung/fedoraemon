@@ -103,7 +103,7 @@ dnf autoremove --assumeyes
 # install repo
 FEDORA_VER=$(rpm -E %fedora)
 cd /boot
-KERNEL_OLD=*$(echo System.map* | sed "s/System.map-//")
+KERNEL_OLD=*$(find -name "System.map*" | sed "s/System.map-//")
 cd -
 
 dnf install --assumeyes --nogpgcheck \
@@ -118,7 +118,7 @@ dnf config-manager addrepo --from-repofile="https://fcitx5-lotus.pages.dev/rpm/f
 
 dnf update --assumeyes --refresh
 dnf remove --assumeyes "$KERNEL_OLD"
-KERNEL_NEW=$(echo System.map* | sed "s/System.map-//")
+KERNEL_NEW=$(find -name "System.map*" | sed "s/System.map-//")
 
 # install pkgs
 
