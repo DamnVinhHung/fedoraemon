@@ -102,7 +102,6 @@ dnf autoremove --assumeyes
 
 # install repo
 FEDORA_VER=$(rpm -E %fedora)
-KERNEL_OLD=$(rpm -q kernel)
 
 dnf install --assumeyes --nogpgcheck \
     --repofrompath 'terra,https://repos.fyralabs.com/terra$releasever' terra-release
@@ -115,6 +114,8 @@ dnf config-manager addrepo --from-repofile="https://pkg.cloudflare.com/cloudflar
 dnf config-manager addrepo --from-repofile="https://fcitx5-lotus.pages.dev/rpm/fedora/fcitx5-lotus-$FEDORA_VER.repo"
 
 dnf update --assumeyes --refresh
+
+KERNEL_OLD=$(rpm -q --queryformat '%{EVR}' kernel)
 dnf remove --assumeyes "*${KERNEL_OLD}*"
 
 # install pkgs
