@@ -50,6 +50,7 @@ PKG_TOOLS=(
     btop
     htop
     jq
+    distrobox
     podman
     podman-compose
     podman-docker
@@ -117,15 +118,21 @@ dnf config-manager addrepo --from-repofile="https://fcitx5-lotus.pages.dev/rpm/f
 
 dnf update --assumeyes --refresh
 dnf remove --assumeyes "$KERNEL_OLD"
+KERNEL_NEW=$(echo System.map* | sed "s/System.map-//")
 
 # install pkgs
 
 dnf install --assumeyes ${PKG_NVIDIA[*]}
+until rpm -q "kmod-nvidia-$KERNEL_NEW"; do
+    sleep 5
+done
+
 dnf swap --assumeyes --allowerasing ffmpeg-free ffmpeg
-dnf install --assumeyes ${PKG_ADD[*]}
+dnf install --assumeyes ${PKG_CODEC[*]}
+# dnf install --assumeyes ${PKG_ADD[*]}
 
 cd /boot
 dracut --verbose --reproducible --no-hostonly --no-hostonly-cmdline --add " dmsquash-live livenet pollcdrom " initrd
-cp vmlinuz-* linux
+cp vmlinuz-$KERNEL_NEW linux
 chmod 777 initrd linux
 cd -

@@ -2,7 +2,7 @@
 set -ex
 
 ISO=Fedora-KDE-Desktop-Live-44-1.7.x86_64.iso
-ISO_OUT=AAAAAA.iso
+ISO_OUT=Fedoraemon.iso
 ROOTFS=LiveOS/squashfs.img
 IMG_ARGS='-Efragments -C 1048576 -z lzma,level=6 --exclude-regex=^image$ --exclude-regex=^.kconfig$ --exclude-regex=^run/.*$ --exclude-regex=^tmp/.*$ --exclude-regex=^.buildenv$ --exclude-regex=^var/cache/kiwi$'
 
@@ -24,6 +24,10 @@ sudo systemd-nspawn -D root --resolv-conf bind-host -- /usr/bin/bash /chroot.sh
 
 sudo mv root/boot/initrd root/boot/linux iso/boot/x86_64/loader/
 sudo chown 1000:1000 iso/boot/x86_64/loader/initrd iso/boot/x86_64/loader/linux
+
+rm -f iso/$ROOTFS
 sudo mkfs.erofs iso/$ROOTFS root $IMG_ARGS
+
 cp -f grub.cfg iso/boot/grub2/grub.cfg
+rm -f $ISO_OUT
 xorriso -indev $ISO -outdev $ISO_OUT -update_r iso / -boot_image any replay

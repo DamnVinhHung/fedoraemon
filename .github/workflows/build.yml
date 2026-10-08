@@ -17,5 +17,5 @@ jobs:
     - run: bash build.sh
     - uses: actions/upload-artifact@main
       with:
-        path: AAAAAA.iso
+        path: Fedoraemon.iso
         archive: false

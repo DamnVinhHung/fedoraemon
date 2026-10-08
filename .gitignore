@@ -1,2 +1,6 @@
 iso
 root
+mnt_1
+mnt_og
+*.img
+*.iso
