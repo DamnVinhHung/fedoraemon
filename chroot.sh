@@ -1,33 +1,32 @@
 set -ex
 
 PKG_RM=(
+    "*abrt*"
+    "*plymouth*"
+    "@desktop-accessibility"
+    "@dial-up"
+    "@firefox"
+    "@fonts"
+    "@guest-desktop-agents"
+    "@hardware-support"
     "@kde-apps"
+    "@kde-media"
     "@kde-pim"
     "@libreoffice"
-    "@desktop-accessibility"
-    "@guest-desktop-agents"
     "@printing"
-    "*abrt*"
     "libreoffice*"
-    "plymouth*"
     "sssd*"
     "tuned*"
     dracut-config-rescue
-    firefox
-    firefox-langpacks
     gssproxy
     kaddressbook
     kdebugsettings
     kmailtransport
     plasma-discover-notifier
     plasma-workspace-wallpapers
-    elisa-player
-    nfs-utils
-    thunderbird
 )
 PKG_NVIDIA=(
     akmod-nvidia
-    xorg-x11-drv-nvidia
     xorg-x11-drv-nvidia-cuda
 )
 PKG_APPS=(
@@ -96,7 +95,6 @@ sed -i 's/=enforcing/=permissive/g' /etc/selinux/config
 find /boot -name "*0-rescue*" -delete
 
 # cleanup
-PKG_RM+=(intel-gpu-firmware) # TODO: remove in F35; conflicts with linux-firmware
 dnf remove --assumeyes ${PKG_RM[*]}
 dnf autoremove --assumeyes
 
@@ -118,14 +116,11 @@ dnf update --assumeyes --refresh
 dnf remove --assumeyes "*${KERNEL_OLD}*"
 
 # install pkgs
+KERNEL_NEW=$(rpm -q --queryformat "%{EVR}.%{ARCH}" kernel)
 
-dnf install --assumeyes ${PKG_NVIDIA[*]}
-until rpm -qa "kmod-nvidia-*"; do
-    echo "Waiting driver build to finish..."
-    sleep 5
-done
+dnf install --assumeyes --allowerasing ${PKG_NVIDIA[*]} ${PKG_CODEC[*]}
+akmods --kernel $KERNEL_NEW
 
-dnf install --assumeyes --allowerasing ${PKG_CODEC[*]}
 # dnf install --assumeyes ${PKG_ADD[*]}
 
 cd /boot
@@ -133,3 +128,5 @@ dracut --verbose --reproducible --no-hostonly --no-hostonly-cmdline --add " dmsq
 cp vmlinuz-* linux
 chmod 777 initrd linux
 cd -
+
+setfiles -T0 -F -p -c /etc/selinux/targeted/policy/policy.35 -e /proc -e /sys -e /dev /etc/selinux/targeted/contexts/files/file_contexts /

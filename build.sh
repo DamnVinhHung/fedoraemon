@@ -26,7 +26,7 @@ sudo mv root/boot/initrd root/boot/linux iso/boot/x86_64/loader/
 sudo chown 1000:1000 iso/boot/x86_64/loader/initrd iso/boot/x86_64/loader/linux
 
 rm -f iso/$ROOTFS
-sudo mkfs.erofs iso/$ROOTFS root $IMG_ARGS
+sudo mkfs.erofs iso/$ROOTFS root #$IMG_ARGS
 
 cp -f grub.cfg iso/boot/grub2/grub.cfg
 rm -f $ISO_OUT
